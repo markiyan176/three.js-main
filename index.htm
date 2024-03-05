@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Three.js Example</title>
+    <link rel="stylesheet" href="style.css" />
+    <style></style>
+  </head>
+  <body>
+    <canvas id="canvas"></canvas>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.130.0/build/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/23.1.1/tween.umd.js"></script>
+    <script>
+      // Сцена
+      const scene = new THREE.Scene();
+
+      // Камера
+      const camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+      camera.position.z = 5;
+
+      // Рендерер
+      const renderer = new THREE.WebGLRenderer({
+        canvas: document.getElementById("canvas"),
+      });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+
+      // Створення куба
+      const geometry = new THREE.BoxGeometry(1, 1, 1);
+      const material = new THREE.MeshBasicMaterial({ color: 0x0000ff });
+      const cube = new THREE.Mesh(geometry, material);
+      scene.add(cube);
+
+      // Анімація стрибка
+      const jumpUpTween = new TWEEN.Tween(cube.position).to({ y: 3 }, 500);
+      const jumpDownTween = new TWEEN.Tween(cube.position).to({ y: 0 }, 500);
+      jumpUpTween.chain(jumpDownTween);
+
+      // Функція анімації
+      function animate() {
+        requestAnimationFrame(animate);
+
+        TWEEN.update(); // Оновлення TWEEN
+
+        renderer.render(scene, camera);
+      }
+
+      // Запуск анімації
+      document.addEventListener("keydown", function (event) {
+        if (event.code === "Space") {
+          jumpUpTween.start();
+        }
+      });
+
+      animate();
+    </script>
+  </body>
+</html>
